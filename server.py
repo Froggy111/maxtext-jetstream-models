@@ -126,7 +126,7 @@ def main(engine_configs, server_config):
 		server_config = server_config,
 	)
 	test_request = copy.deepcopy(request_template)
-	n_to_run = 1000000
+	n_to_run = 100000
 	n_per_batch = 1000
 	n_prefill_toks = 1024
 	n_generate_toks = 1024
