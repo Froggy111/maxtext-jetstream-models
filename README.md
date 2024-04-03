@@ -10,10 +10,13 @@ bash setup.sh
 To set the model-id to run:
 ```
 export MAXTEXT_MODEL_TO_RUN=${the model id (must be one of the list below)}
+export MAXTEXT_LOAD_FROM_HF=${True or False}
+export MAXTEXT_LOAD_FROM_HF_MODEL_TYPE=${must be one of the list below}
 ```
 
 To automatically start an http server, run:
 ```
+cd maxtext-jetstream-models
 bash start_server.sh
 ```
 after setting the model-id in the same shell.
