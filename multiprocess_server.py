@@ -208,7 +208,7 @@ def main(engine_configs, server_config):
 	def make_request(request):
 		logging.info("REQUEST: ", request)
 		while True:
-			thing = requests.get(f'http://{server_config["server_host"]}:{server_config["server_port"]}/requester', json = request).json()
+			thing = requests.get(f'http://{server_config["server_host"]}:{server_config["server_port"]}/request', json = request).json()
 			if type(thing) == int:
 				continue
 			break

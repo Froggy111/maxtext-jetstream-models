@@ -9,8 +9,9 @@ import os, sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "maxtext/MaxText"))
 
+import aiohttp.client_exceptions
 import aiohttp.http_exceptions
-import time, random, warnings, math, requests, json, \
+import time, random, warnings, math, requests, json, httpx, \
 	threading, queue, copy, traceback, signal, logging, asyncio, aiohttp
 
 from multiprocessing import Queue as mpqueue
@@ -132,7 +133,7 @@ server_cfg = {
 }
 
 def main():
-	request_template['config']['stop_on_eos'] = True
+	# request_template['config']['stop_on_eos'] = True
 	test_request = copy.deepcopy(request_template)
 	n_to_run = 384 * 1024
 	n_per_batch = 384 * 16
@@ -143,19 +144,36 @@ def main():
 	# total_genned = 0
 
 	def make_request(request):
-		logging.info("REQUEST: ", request)
+		print("REQUEST: ", request)
 		while True:
-			thing = requests.get('http://127.0.0.1:30000/request', params = {'request': json.dumps(request)})
-			# thing = asyncio.run(thing)
-			print(thing)
-			print(type(thing))
-			print(thing.text)
-			# thing = thing.json()
-			if type(thing) == int:
-				continue
-			break
-		print(thing)
-		return thing
+			try:
+				thing = requests.get(f'http://{server_cfg["server_host"]}:{server_cfg["server_port"]}/request', params = {'request': json.dumps(request)})
+				# thing = asyncio.run(thing)
+				thing = thing.json()
+				print(thing)
+			except requests.exceptions.HTTPError as e:
+				print(e)
+
+	async def async_request(request):
+		print("REQUEST: ", request)
+		while True:
+			# try:
+			# 	thing = await httpx.get(f'http://{server_cfg["server_host"]}:{server_cfg["server_port"]}/request', params = {'request': json.dumps(request)})
+			# 	# thing = asyncio.run(thing)
+			# 	thing = thing.json()
+			# 	print(thing)
+			# except httpx.exceptions.HTTPError as e:
+			# 	print(e)
+			try:
+				async with aiohttp.ClientSession() as session:
+					async with session.get(f'http://{server_cfg["server_host"]}:{server_cfg["server_port"]}/request', params = {'request': json.dumps(request)}) as response:
+						thing = await response.json()
+						print(thing)
+			except aiohttp.http_exceptions.HttpProcessingError as e:
+				print(e)
+	async def async_request_manager(request):
+		coros = [async_request(copy.deepcopy(request), ) for _ in range(n_concurrent)]
+		await asyncio.gather(*coros)
 	# time.sleep(10000000)
 	logging.info("STARTING BENCHMARK")
 	tstart = time.perf_counter()
@@ -163,7 +181,8 @@ def main():
 	# 	asyncio.run(test_all_requesting())
 	# asyncio.run(cont_request(test_request))
 	# asyncio.run(cont_request_manager(test_request))
-	make_request(test_request)
+	# make_request(test_request)
+	asyncio.run(async_request_manager(test_request))
 	tend = time.perf_counter()
 	queries_per_second = n_to_run / (tend - tstart)
 	prefill_toks_per_second = n_prefill_toks * n_to_run / (tend - tstart)
@@ -175,5 +194,7 @@ def main():
 		f.write(f'Queries per second: {queries_per_second}\n')
 		f.write(f'Prefill tokens per second: {prefill_toks_per_second}\n')
 		f.write(f'Generate tokens per second: {generate_toks_per_second}\n')
+	traceback.print_exc()
+	os.kill(os.getpid(), signal.SIGKILL)
 
 main()
