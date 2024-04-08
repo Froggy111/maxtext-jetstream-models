@@ -1,5 +1,10 @@
 A repository for converted models from HF format to MaxText format, as well as automated scripts for inference (and possibly training later).
 
+NOTE: THIS IS STILL HEAVILY WIP.
+Currently working:
+Conversion for Mistral (most likely LLaMA and Mixtral as well though not tested)
+Server for running inference (FastAPI)
+
 First, clone this repo and setup:
 ```
 git clone https://github.com/Froggy111/maxtext-jetstream-models
@@ -7,6 +12,12 @@ cd maxtext-jetstream-models
 bash setup.sh
 ```
 
+server is in multiprocess_server.py
+download model checkpoints from the huggingface repo (https://huggingface.co/a-normal-username/maxtext-jetstream-models)
+start server with start_server.sh
+test server with requester.py
+
+**MANY OF FEATURES BELOW ARE NOT DONE YET.**
 To set the model-id to run:
 ```
 export MAXTEXT_MODEL_TO_RUN=${the model id (must be one of the list below)}

@@ -113,7 +113,7 @@ server_cfg = {
 
 	# api settings
 	'server_host': '127.0.0.1',
-	'server_port': 30000,
+	'server_port': 8080,
 	'n_request_ids': 4096, # recommended to be large. Not too large though as it runs into memory errors for some reason.
 	'max_concurrent_requests': 1024, # should be at least larger than combined total batch size! should be smaller than request/response store queue
 	'delay_before_reject': 1, # seconds to delay before rejecting request to prevent spamming from client side
