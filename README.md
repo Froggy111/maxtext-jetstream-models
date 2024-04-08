@@ -17,6 +17,8 @@ download model checkpoints from the huggingface repo (https://huggingface.co/a-n
 start server with start_server.sh
 test server with requester.py
 
+recommended to use greedy/weighted decoding. the rest cause much more overhead for some reason.
+
 **MANY OF FEATURES BELOW ARE NOT DONE YET.**
 To set the model-id to run:
 ```
