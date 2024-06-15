@@ -1,3 +1,5 @@
+**THIS REPOSITIORY IS OUTDATED. REFER TO OFFICIAL MAXTEXT REPO.**
+
 A repository for converted models from HF format to MaxText format, as well as automated scripts for inference (and possibly training later).
 
 NOTE: THIS IS STILL HEAVILY WIP.
